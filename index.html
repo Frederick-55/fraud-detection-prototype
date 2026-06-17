@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Money Fraud Detection System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">FraudShield</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="offlineIndicator" class="alert alert-warning text-center rounded-0 mb-0 fw-bold" style="display: none;">
+        ⚡ You are currently operating offline.
+    </div>
+    <div id="onlineIndicator" class="alert alert-success text-center rounded-0 mb-0 fw-bold" style="display: none;">
+        🌐 You are back online.
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto text-center">
+                <h1 class="display-4">Mobile Money Fraud Detection</h1>
+                <p class="lead mt-3">
+                    Real-time fraud detection powered by Machine Learning. 
+                    Protect your transactions with our intelligent monitoring system.
+                </p>
+                <a href="dashboard.html" class="btn btn-primary btn-lg mt-3">Go to Dashboard</a>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Real-time Monitoring</h5>
+                        <p class="card-text">Transactions are analyzed instantly using advanced ML algorithms.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Instant Alerts</h5>
+                        <p class="card-text">Get notified immediately when suspicious activity is detected.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Smart Analytics</h5>
+                        <p class="card-text">Track fraud patterns and monitor system performance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(error => {
+                console.error('Service Worker registration failed:', error);
+            });
+        }
+        window.addEventListener('online', () => {
+            document.getElementById('offlineIndicator').style.display = 'none';
+            const onlineInd = document.getElementById('onlineIndicator');
+            if (onlineInd) {
+                onlineInd.style.display = 'block';
+                setTimeout(() => onlineInd.style.display = 'none', 3000);
+            }
+        });
+        window.addEventListener('offline', () => document.getElementById('offlineIndicator').style.display = 'block');
+        if (!navigator.onLine) document.getElementById('offlineIndicator').style.display = 'block';
+    </script>
+</body>
+</html>

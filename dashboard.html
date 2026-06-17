@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Fraud Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">FraudShield Dashboard</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html">Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="offlineIndicator" class="alert alert-warning text-center rounded-0 mb-0 fw-bold" style="display: none;">
+        ⚡ You are currently operating offline. Transactions will be synced when you reconnect.
+    </div>
+    <div id="onlineIndicator" class="alert alert-success text-center rounded-0 mb-0 fw-bold" style="display: none;">
+        🌐 You are back online. Data has been synced.
+    </div>
+
+    <div class="container mt-4">
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Total Transactions</h6>
+                        <h2 class="card-title" id="totalTransactions">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card warning">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Fraud Detected</h6>
+                        <h2 class="card-title" id="fraudCount">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card alert-card">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Active Alerts</h6>
+                        <h2 class="card-title" id="activeAlerts">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Detection Rate</h6>
+                        <h2 class="card-title" id="detectionRate">0%</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Transaction Form -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Test Transaction</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="transactionForm">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">User ID</label>
+                                        <input type="number" class="form-control" id="userId" value="1001" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Amount (GHS)</label>
+                                        <input type="number" class="form-control" id="amount" value="250" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Payment Method</label>
+                                        <select class="form-control" id="paymentMethod">
+                                            <option>mobile_wallet</option>
+                                            <option>bank_transfer</option>
+                                            <option>card</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Location</label>
+                                        <input type="text" class="form-control" id="location" value="Accra">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Check Transaction</button>
+                        </form>
+                        <div id="resultAlert" class="mt-3" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Two-column layout for Alerts and Chart -->
+        <div class="row">
+            <!-- Alerts List -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-warning">
+                        <h5 class="mb-0">Active Alerts</h5>
+                    </div>
+                    <div class="card-body" id="alertsList" style="max-height: 400px; overflow-y: auto;">
+                        <p class="text-muted">Loading alerts...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fraud Chart -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Fraud Detection Trend</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="fraudChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions Table -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">Recent Transactions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="transactionsTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>User</th>
+                                        <th>Amount</th>
+                                        <th>Time</th>
+                                        <th>Risk Score</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactionsBody">
+                                    <tr><td colspan="6" class="text-center">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(error => {
+                console.error('Service Worker registration failed:', error);
+            });
+        }
+    </script>
+</body>
+</html>
